@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '../..:/workspaces:cached'
+    command: sleep infinity
+    network_mode: 'service:db'
+  db:
+    image: 'mongo:latest'
+    restart: unless-stopped
+    volumes:
+      - 'mongodb-data:/data/db'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: players
+volumes:
+  mongodb-data: 

@@ -7,4 +7,8 @@
     <RootNamespace>vscode_remote_try_dotnet</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MongoDB.driver" Version="2.19.0" />
+  </ItemGroup>
+
 </Project>

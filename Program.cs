@@ -1,34 +1,29 @@
+using Microsoft.Net.Http.Headers;
+using UnderdogTakeHome.Data;
+using UnderdogTakeHome.Models;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+
+// Add services to the container.
+builder.Services.Configure<DatabaseSettings>(
+    builder.Configuration.GetSection("Database"));
+
+builder.Services.AddHttpClient("Cbs", httpClient =>
+{
+    httpClient.BaseAddress = new Uri("https://api.cbssports.com/");
+    httpClient.DefaultRequestHeaders.Add(
+        HeaderNames.Accept, "application/json");
+});
+builder.Services.AddSingleton<PlayerService>();
+builder.Services.AddSingleton<PlayerFactory>();
+builder.Services.AddSingleton<ICbsSportsClient, CbsSportsClient>();
+
 var app = builder.Build();
 
 app.Urls.Add("http://localhost:5000");
 
-app.MapGet("/", () => "Hello World!");
-
-app.MapGet("/{cityName}/weather", GetWeatherByCity);
+app.MapControllers();
 
 app.Run();
-
-
-Weather GetWeatherByCity(string cityName)
-{
-    app.Logger.LogInformation($"Weather requested for {cityName}.");
-    var weather = new Weather(cityName);
-    return weather;
-}
-
-public record Weather
-{
-    public string City { get; set; }
-
-    public Weather(string city)
-    {
-        City = city;
-        Conditions = "Cloudy";
-        // Temperature here is in celsius degrees, hence the 0-40 range.
-        Temperature = new Random().Next(0,40).ToString();
-    }
-
-    public string Conditions { get; set; }
-    public string Temperature { get; set; }
-}
